@@ -1083,13 +1083,6 @@ void BTM_PINCodeReply (BD_ADDR bd_addr, UINT8 res, UINT8 pin_len, UINT8 *p_pin, 
     btm_sec_change_pairing_state (BTM_PAIR_STATE_WAIT_AUTH_COMPLETE);
     btm_cb.acl_disc_reason = HCI_SUCCESS;
 
-#ifdef PORCHE_PAIRING_CONFLICT
-    BTM_TRACE_EVENT("BTM_PINCodeReply(): Saving pin_len: %d btm_cb.pin_code_len: %d", pin_len, btm_cb.pin_code_len);
-    /* if this was not pre-fetched, save the PIN */
-    if (btm_cb.pin_code_len == 0)
-        memcpy (btm_cb.pin_code, p_pin, pin_len);
-    btm_cb.pin_code_len_saved = pin_len;
-#endif
     btsnd_hcic_pin_code_req_reply (bd_addr, pin_len, p_pin);
 }
 
@@ -5589,10 +5582,6 @@ void btm_sec_pin_code_request (UINT8 *p_bda)
     tBTM_SEC_DEV_REC *p_dev_rec;
     tBTM_CB          *p_cb = &btm_cb;
 
-#ifdef PORCHE_PAIRING_CONFLICT
-    UINT8 default_pin_code_len = 4;
-    PIN_CODE default_pin_code = {0x30, 0x30, 0x30, 0x30};
-#endif
     BTM_TRACE_EVENT ("btm_sec_pin_code_request()  State: %s, BDA:%04x%08x",
                       btm_pair_state_descr(btm_cb.pairing_state),
                       (p_bda[0]<<8)+p_bda[1], (p_bda[2]<<24)+(p_bda[3]<<16)+(p_bda[4]<<8)+p_bda[5] );
@@ -5675,10 +5664,6 @@ void btm_sec_pin_code_request (UINT8 *p_bda)
         BTM_TRACE_EVENT ("btm_sec_pin_code_request bonding sending reply");
         btsnd_hcic_pin_code_req_reply (p_bda, btm_cb.pin_code_len, p_cb->pin_code);
 
-#ifdef PORCHE_PAIRING_CONFLICT
-        btm_cb.pin_code_len_saved = btm_cb.pin_code_len;
-#endif
-
         /* Mark that we forwarded received from the user PIN code */
         btm_cb.pin_code_len = 0;
 
@@ -5709,7 +5694,6 @@ void btm_sec_pin_code_request (UINT8 *p_bda)
     /* Notify upper layer of PIN request and start expiration timer */
     else
     {
-        btm_cb.pin_code_len_saved = 0;
         btm_sec_change_pairing_state (BTM_PAIR_STATE_WAIT_LOCAL_PIN);
         /* Pin code request can not come at the same time as connection request */
         memcpy (p_cb->connecting_bda, p_bda, BD_ADDR_LEN);

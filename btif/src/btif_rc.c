@@ -413,7 +413,6 @@ void handle_rc_ctrl_features(int index)
         int rc_features = 0;
         bdcpy(rc_addr.address, btif_rc_cb[index].rc_addr);
 
-<<<<<<< HEAD
         if ((btif_rc_cb[index].rc_features & BTA_AV_FEAT_ADV_CTRL)&&
              (btif_rc_cb[index].rc_features & BTA_AV_FEAT_RCCT))
         {
@@ -515,38 +514,6 @@ void handle_rc_features(int index)
 #endif
     }
 }
-
-/***************************************************************************
- *  Function       btif_rc_get_connection_state
- *
- *  - Argument:    none
- *
- *  - Description: Return true if any RC is in connected state
- *
- ***************************************************************************/
-static BOOLEAN btif_rc_get_connection_state()
-{
-    int clients;
-
-<<<<<<< HEAD
-    for (clients = 0; clients < btif_max_rc_clients; clients++)
-=======
-#if (AVRC_ADV_CTRL_INCLUDED == TRUE)
-    if ( (btif_rc_cb.rc_features & BTA_AV_FEAT_ADV_CTRL) &&
-         (btif_rc_cb.rc_features & BTA_AV_FEAT_RCTG))
->>>>>>> android-6.0.1_r22
-    {
-        if (btif_rc_cb[clients].rc_connected == TRUE)
-        {
-            return TRUE;
-        }
-    }
-<<<<<<< HEAD
-    return FALSE;
-}
-=======
-#endif
->>>>>>> android-6.0.1_r22
 
 /***************************************************************************
  *  Function       btif_rc_get_valid_idx
